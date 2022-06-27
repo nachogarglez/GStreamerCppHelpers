@@ -4,8 +4,8 @@
     - [Pass to a parameter expecting a raw pointer](#pass-to-a-parameter-expecting-a-raw-pointer)
   - [How to use](#how-to-use)
     - [First check the function documentation](#first-check-the-function-documentation)
-      - [Check if the function returns `[transfer::full]` or `[Transfer::m_floating]`](#check-if-the-function-returns-transferfull-or-transferfloating)
-      - [Check if the function returns [transfer::none]](#check-if-the-function-returns-transfernone)
+      - [Check if the function returns `[transfer::full]` or `[Transfer::floating]`](#check-if-the-function-returns-transferfull-or-transferfloating)
+      - [Check if the function returns `[transfer::none]`](#check-if-the-function-returns-transfernone)
     - [How to operate with the constructed `GstPtr<Type>`](#how-to-operate-with-the-constructed-gstptrtype)
       - [How to pass the pointer back to GStreamer](#how-to-pass-the-pointer-back-to-gstreamer)
         - [If the function expects `[transfer::none]` or it's  a  `self` parameter for referring the object (this is a very common case):](#if-the-function-expects-transfernone-or-its--a--self-parameter-for-referring-the-object-this-is-a-very-common-case)
@@ -35,7 +35,7 @@ Please read it carefully in order to avoid leaks or segfaults.
  | Function returns         | Methods                                                                                                                                                                           |
 |--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
  | [Transfer::full]         | GstPtr<Type>::GstPtr (Type *&&)<br>GstPtr<Type>::GstPtr (Type *&)<br>GstPtr<Type>& operator=(Type *&&)<br>GstPtr<Type>& operator=(Type *&)                                        |
- | [Transfer::m_floating]     | GstPtr<Type>::GstPtr (Type *&&)<br>GstPtr<Type>::GstPtr (Type *&)<br>GstPtr<Type>& operator=(Type *&&)<br>GstPtr<Type>& operator=(Type *&)<br>*AND THEN*<br>GstPtr<Type>::sink    |
+ | [Transfer::floating]     | GstPtr<Type>::GstPtr (Type *&&)<br>GstPtr<Type>::GstPtr (Type *&)<br>GstPtr<Type>& operator=(Type *&&)<br>GstPtr<Type>& operator=(Type *&)<br>*AND THEN*<br>GstPtr<Type>::sink    |
  | [Transfer::none]         | GstPtr<Type>::transferNone (Type*)                                                                                                                                                |
  
  ###  Pass to a parameter expecting a raw pointer
@@ -49,7 +49,7 @@ Please read it carefully in order to avoid leaks or segfaults.
 
 ## How to use
 
-First, you want this type if you need the same functionality as std::shared_ptr.
+First, you want this type if you need the same functionality as `std::shared_ptr`.
 
 If you just want a view of a pointer (i.e, you don't plan ref/unref it, and you
 are not going to store the pointer), just use the GStreamer's raw pointer.
@@ -59,25 +59,25 @@ are not going to store the pointer), just use the GStreamer's raw pointer.
 It's critical to know if the callee transfers ownership to us, or it doesn't.
 Using the incorrect method here will lead to a mem leak or double unref (=crash)
 
-####  Check if the function returns `[transfer::full]` or `[Transfer::m_floating]`
+####  Check if the function returns `[transfer::full]` or `[Transfer::floating]`
 
 In this case, function is transferring ownership. You can use
 constructors or assignment operators. For example:
 ```C++
-                            [transfer::m_floating]
+                            [transfer::floating]
 GstPtr<GstElement> m_pipe = gst_pipeline_new(... )
 ```
 
-Also, for a `[transfer::m_floating]` function, documentation states that
+Also, for a `[transfer::floating]` function, documentation states that
 you should do:
 
 ```C++
 m_pipe.sink()
 ```
 
-In practice, a lot of functions returning `[transfer::m_floating]` do not actually
-return a m_floating reference, but in this case the `::sink()` method does nothing.
-Best practice is calling it for all `[transfer::m_floating]` functions.
+In practice, a lot of functions returning `[transfer::floating]` do not actually
+return a `floating` reference, but in this case the `::sink()` method does nothing.
+Best practice is calling it for all `[transfer::floating]` functions.
 
 `[transfer::full]` functions work as expected, but do not call ::sink for those
 because some functions returning `[transfer::full]` do not clear the m_floating
@@ -140,7 +140,8 @@ and transfer the copy instead. i.e:
 ```
 
 ###  Static and dynamic casting
- 
+
+You can cast `self` either statically or dinamically, for example:
 
 ```c++
  gst_bin.self<BaseType> ()
