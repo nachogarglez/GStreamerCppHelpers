@@ -6,7 +6,7 @@
 // Dummy glib/gstreamer
 // It's not necessary using the real libraries for testing GstPtr<> functionality
 //
-using GType = ulong;
+using GType = long;
 constexpr GType G_TYPE_OBJECT = 0x01;
 constexpr GType GST_TYPE_OBJECT = 0x02;
 constexpr GType GST_TYPE_ELEMENT = 0x03;

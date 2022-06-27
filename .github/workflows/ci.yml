@@ -34,3 +34,28 @@ jobs:
       - name: Run unit tests
         run: |                
           valgrind cmake --build build --target test
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python PIP
+        run: |
+          python -m pip install --upgrade pip
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+        with:
+          cmake-version: '3.23.x'
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
+      - name: Configure project
+        run: |
+          cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCONAN_BUILD_MISSING=ON
+      - name: Build project
+        run: |
+         .\build\activate_run.ps1
+         cmake --build build
+      - name: Run unit tests
+        run: |
+         .\build\activate_run.ps1
+         cmake --build build --target run_tests
