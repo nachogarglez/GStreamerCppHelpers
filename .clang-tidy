@@ -1,0 +1,44 @@
+#  Main configuration for C++ files
+#
+---
+Checks:
+  -*,
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  -clang-analyzer-cplusplus.Move,
+  -clang-analyzer-cplusplus.NewDeleteLeaks,
+  bugprone-*,
+  -bugprone-use-after-move,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-goto,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-special-member-functions,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,  
+  portability-*,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-named-parameter
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+AnalyzeTemporaryDtors: false
+FormatStyle: file
+CheckOptions:
+  - { key: readability-identifier-naming.StructCase,            value: CamelCase }
+  - { key: readability-identifier-naming.EnumCase,              value: CamelCase }
+  - { key: readability-identifier-naming.EnumConstantCase,      value: camelBack }
+  - { key: readability-identifier-naming.ClassCase,             value: CamelCase }
+  - { key: readability-identifier-naming.UnionCase,             value: CamelCase }
+  - { key: readability-identifier-naming.NamespaceCase,         value: camelBack }
+  - { key: readability-identifier-naming.MethodCase,            value: camelBack }
+  - { key: readability-identifier-naming.VariableCase,          value: camelBack }
+  - { key: readability-identifier-naming.FunctionCase,          value: camelBack }
+  - { key: readability-identifier-naming.MemberCase,            value: camelBack }
+  - { key: readability-identifier-naming.MemberPrefix,          value: m_ }
+  - { key: readability-identifier-naming.ConstexprVariableCase, value: aNy_CasE }
+  - { key: readability-identifier-naming.ConstexprFunctionCase, value: aNy_CasE }
+...
