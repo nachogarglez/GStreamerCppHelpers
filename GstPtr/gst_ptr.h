@@ -11,7 +11,7 @@
 GStreamer's functions return and expect different type of pointers, and it's not
 possible to create full-automatic smart pointers without some tool to extract
 the semantics from .gir files (GObject introspection files).
-This is a light-weight header for those that want a C usage of GStreamer
+This is a light-weight header for those who want a C usage of GStreamer
 from C++, but saving the trouble of dealing with raw pointers.
 
 You need to check the library documentation to be sure about how to construct
@@ -33,7 +33,7 @@ Please read it carefully in order to avoid leaks or segfaults.
  |                          | GstPtr<Type>& operator=(Type *&&) |
  |                          | GstPtr<Type>& operator=(Type *&)  |
  +--------------------------+-----------------------------------+
- | [Transfer::m_floating]     | GstPtr<Type>::GstPtr (Type *&&)   |
+ | [Transfer::floating]     | GstPtr<Type>::GstPtr (Type *&&)   |
  |                          | GstPtr<Type>::GstPtr (Type *&)    |
  |                          | GstPtr<Type>& operator=(Type *&&) |
  |                          | GstPtr<Type>& operator=(Type *&)  |
@@ -70,25 +70,25 @@ are not going to store the pointer), just use the GStreamer's raw pointer.
 It's critical to know if the callee transfers ownership to us, or it doesn't.
 Using the incorrect method here will lead to a mem leak or double unref (=crash)
 
-1.1.1 Check if the function returns [transfer::full] or [Transfer::m_floating]
+1.1.1 Check if the function returns [transfer::full] or [Transfer::floating]
 ----------------------------------------------------------------------------
 In this case, function is transferring ownership. You can use
 constructors or assignment operators. For example:
 
-                            [transfer::m_floating]
+                            [transfer::floating]
 GstPtr<GstElement> m_pipe = gst_pipeline_new(... )
 
-Also, for a [transfer::m_floating] function, documentation states that
+Also, for a [transfer::floating] function, documentation states that
 you should do:
 
 m_pipe.sink()
 
-In practice, a lot of functions returning [transfer::m_floating] do not actually
-return a m_floating reference, but in this case the ::sink() method does nothing.
-Best practice is calling it for all [transfer::m_floating] functions.
+In practice, a lot of functions returning [transfer::floating] do not actually
+return a floating reference, but in this case the ::sink() method does nothing.
+Best practice is calling it for all [transfer::floating] functions.
 
 [transfer::full] functions work as expected, but do not call ::sink for those
-because some functions returning [transfer::full] do not clear the m_floating
+because some functions returning [transfer::full] do not clear the floating
 flag, thus causing leaks is ::sink is called.
 
 
@@ -169,7 +169,7 @@ and transfer the copy instead. i.e:
  Casting between different GstPtr is done with the free functions
  staticGstPtrCast and dynamicGstPtrCast, for example:
 
- GstPtr<GstBin> asElement = dynamicGstPtrCast<GstBin>(m_pipe);
+ GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
 
 */
 
@@ -383,21 +383,21 @@ template <typename Type> struct GstPtr {
       detail::GetInterface<Type>::type::ref(m_pointer);
     }
   }
-  /// Try to "sink" a m_floating reference.
+  /// Try to "sink" a floating reference.
   /// This is a weird GObject concept that tries to emulate move semantics,
-  /// a "m_floating" object is a temporal object.
+  /// a "floating" object is a temporal object.
   ///
   /// An interface can implement a  "sink" function, what means:
   ///
-  /// * If the object is "m_floating" (temporal object), the m_floating flag is
+  /// * If the object is "floating" (temporal object), the floating flag is
   /// deleted and the refcount does not change. Thus, we are taking ownership.
   ///
-  /// * If the object is NOT m_floating means that someone is keeping a reference
-  /// and will unref it. In this case, the sunk interface clears the m_floating
+  /// * If the object is NOT floating means that someone is keeping a reference
+  /// and will unref it. In this case, the sunk interface clears the floating
   /// flag *AND* adds a reference.
 
   // Note: this would be automatic, but I have found some GStreamer functions
-  // returning [transfer:full] with the m_floating flag set.
+  // returning [transfer:full] with the floating flag set.
 
   template <typename U = Type>
   typename std::enable_if<detail::HasSinkFunction<U>::value, void>::type
