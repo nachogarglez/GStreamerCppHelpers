@@ -364,7 +364,7 @@ template <typename Type> struct GstPtr {
   /// asking for [Transfer::full]
   /// GstPtr< > will be nullptr after this operation.
 
-  Type *transferFull() noexcept {
+  [[nodiscard]] Type *transferFull() noexcept {
     Type *toTransfer = m_pointer;
     m_pointer = nullptr;
     return toTransfer;
@@ -404,7 +404,7 @@ template <typename Type> struct GstPtr {
   /// Pass the inner raw ptr to a function
   /// that is not supposed to take ownership.
 
-  Type *self() const noexcept { return m_pointer; }
+  [[nodiscard]] Type *self() const noexcept { return m_pointer; }
 
   /// Pass the inner raw ptr to a function
   /// that is not supposed to take ownership, using a
@@ -412,7 +412,7 @@ template <typename Type> struct GstPtr {
   /// This is static cast, thus only casting to a base class is allowed.
   /// For dynamic casting, use selfDynamic<toDerivedType>().
 
-  template <typename toBaseType> toBaseType *self() const noexcept {
+  template <typename toBaseType> [[nodiscard]] toBaseType *self() const noexcept {
     using BaseInterface = typename detail::GetInterface<toBaseType>::type;
     using DerivedInterface = typename detail::GetInterface<Type>::type;
     static_assert(std::is_base_of_v<BaseInterface, DerivedInterface>,
@@ -425,7 +425,7 @@ template <typename Type> struct GstPtr {
   /// that is not supposed to take ownership, using a
   /// dynamic cast to toDerivedType*
   /// std::bad_cast exception if no such cast is possible
-  template <typename toDerivedType> toDerivedType *selfDynamic() const {
+  template <typename toDerivedType> [[nodiscard]] toDerivedType *selfDynamic() const {
     using DerivedInterface = typename detail::GetInterface<toDerivedType>;
     auto mayPromote = g_type_check_instance_is_a((GTypeInstance *)m_pointer,
                                                  DerivedInterface::getGType());
