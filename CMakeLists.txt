@@ -27,7 +27,7 @@ include(pre-commit)
 include(conan-tools)
 
 # Config conan
-set(CONAN_OPTIONS "gtest:shared=False" )
+set(CONAN_OPTIONS "*:shared=True" )
 
 list(APPEND CONAN_REQUIRES "gtest/cci.20210126")
 list(APPEND CONAN_FIND GTest)
