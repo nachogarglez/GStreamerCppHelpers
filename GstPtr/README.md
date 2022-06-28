@@ -8,7 +8,7 @@
       - [Check if the function returns `[transfer::none]`](#check-if-the-function-returns-transfernone)
     - [How to operate with the constructed `GstPtr<Type>`](#how-to-operate-with-the-constructed-gstptrtype)
       - [How to pass the pointer back to GStreamer](#how-to-pass-the-pointer-back-to-gstreamer)
-        - [If the function expects `[transfer::none]` or it's  a  `self` parameter for referring the object (this is a very common case):](#if-the-function-expects-transfernone-or-its--a--self-parameter-for-referring-the-object-this-is-a-very-common-case)
+        - [If the function expects `[transfer::none]` or it's a `self` parameter](#if-the-function-expects-transfernone-or-its--a--self-parameter-for-referring-the-object-this-is-a-very-common-case)
         - [If the function expects `[transfer::full]`](#if-the-function-expects-transferfull)
     - [Static and dynamic casting](#static-and-dynamic-casting)
 
@@ -17,7 +17,7 @@
 GStreamer's functions return and expect different type of pointers, and it's not
 possible to create full-automatic smart pointers without some tool to extract
 the semantics from .gir files (GObject introspection files).
-This is a light-weight header for those that want a C usage of GStreamer
+This is a light-weight header for those who want a C usage of GStreamer
 from C++, but saving the trouble of dealing with raw pointers.
 
 You need to check the library documentation to be sure about how to construct
@@ -32,19 +32,19 @@ Please read it carefully in order to avoid leaks or segfaults.
 
  ### Construct from a raw pointer
  
- | Function returns         | Methods                                                                                                                                                                           |
-|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | [Transfer::full]         | GstPtr<Type>::GstPtr (Type *&&)<br>GstPtr<Type>::GstPtr (Type *&)<br>GstPtr<Type>& operator=(Type *&&)<br>GstPtr<Type>& operator=(Type *&)                                        |
- | [Transfer::floating]     | GstPtr<Type>::GstPtr (Type *&&)<br>GstPtr<Type>::GstPtr (Type *&)<br>GstPtr<Type>& operator=(Type *&&)<br>GstPtr<Type>& operator=(Type *&)<br>*AND THEN*<br>GstPtr<Type>::sink    |
- | [Transfer::none]         | GstPtr<Type>::transferNone (Type*)                                                                                                                                                |
+ | Function returns     | Methods                                                                                                                                                                                |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ | [Transfer::full]     | GstPtr\<Type\>::GstPtr (Type *&&)<br>GstPtr\<Type\>::GstPtr (Type *&)<br>GstPtr\<Type\>& operator=(Type *&&)<br>GstPtr\<Type\>& operator=(Type *&)                                     |
+ | [Transfer::floating] | GstPtr\<Type\>::GstPtr (Type *&&)<br>GstPtr\<Type\>::GstPtr (Type *&)<br>GstPtr\<Type\>& operator=(Type *&&)<br>GstPtr\<Type\>& operator=(Type *&)<br>*AND THEN*<br>GstPtr<Type>::sink |
+ | [Transfer::none]     | GstPtr\<Type\>::transferNone (Type*)                                                                                                                                                   |
  
  ###  Pass to a parameter expecting a raw pointer
 
 
-| Function expects                    | Methods                                                                                                                         |
-|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| self-reference<br> [Transfer::none] | Type* GstPtr<Type>::self()<br>BaseType* GstPtr<Type>::self<BaseType>()<br>DerivedType* GstPtr<Type>::selfDynamic<DerivedType>() |
-| [Transfer::full]                    | Type* GstPtr<Type>::transferFull()                                                                                              |
+| Function expects                    | Methods                                                                                                                                   |
+|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| self-reference<br> [Transfer::none] | Type* GstPtr\<Type\>::self()<br>BaseType* GstPtr\<Type\>::self\<BaseType\>()<br>DerivedType* GstPtr\<Type\>::selfDynamic\<DerivedType\>() |
+| [Transfer::full]                    | Type* GstPtr\<Type\>::transferFull()                                                                                                      |
 
 
 ## How to use
@@ -141,7 +141,7 @@ and transfer the copy instead. i.e:
 
 ###  Static and dynamic casting
 
-You can cast `self` either statically or dinamically, for example:
+You can cast `self` either statically or dynamically, for example:
 
 ```c++
  gst_bin.self<BaseType> ()
@@ -163,6 +163,6 @@ Free functions to casting to another `GstPtr<>`:
  Example:
 
 ```c++
-GstPtr<GstBin> asElement = dynamicGstPtrCast<GstBin>(m_pipe);
+GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
 ```
 
