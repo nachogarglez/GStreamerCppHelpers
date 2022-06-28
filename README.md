@@ -16,3 +16,18 @@ These headers do not have external dependencies (other than GStreamer itself) an
 * [GstPtr <>](GstPtr/README.md)
   
   A specialized SmartPointer for GStreamer objects.
+  
+  
+# How to build
+
+This library is header-only, therefore you only need to build it to run the tests.
+
+- Pre-requisites:
+  - Conan >= 1.48
+  - clang-tidy  >= 10
+  - Python >= 3.6
+
+```bash
+cmake -Bbuild -DCONAN_BUILD_MISSING=ON
+cmake --build build 
+```
