@@ -401,7 +401,7 @@ template <typename Type> struct GstPtr {
 
   template <typename U = Type>
   typename std::enable_if<detail::HasSinkFunction<U>::value, void>::type
-  sink() noexcept {
+  sink() const noexcept {
     detail::GetInterface<Type>::type::sink(m_pointer);
   }
 
