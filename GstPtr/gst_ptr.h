@@ -183,11 +183,7 @@ and transfer the copy instead. i.e:
 #include <gst/gst.h>
 #endif
 
-#include <cassert>
-#include <functional>
 #include <type_traits>
-#include <typeinfo>
-#include <utility>
 
 namespace detail {
 
