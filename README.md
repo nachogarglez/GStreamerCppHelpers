@@ -23,7 +23,6 @@ These headers do not have external dependencies (other than GStreamer itself) an
 This library is header-only, therefore you only need to build it to run the tests.
 
 - Pre-requisites:
-  - Conan >= 1.48
   - clang-tidy  >= 10
   - Python >= 3.6
 
