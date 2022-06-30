@@ -296,12 +296,14 @@ template <typename T> struct HasSinkFunction {
 //--------------------------------------------------
 // The GstPtr<  > object, finally.
 //--------------------------------------------------
-template <typename Type> struct GstPtr {
+template <typename Type> class GstPtr {
 
   static_assert(detail::IsInterfaceImplemented<Type>::value,
                 "So sorry! There's no interface defined for this type. "
                 "You need add it into GstPtr<> source code or extend "
                 "this header");
+
+public:
 
   // GstPtr is nullptr by default
   GstPtr() noexcept = default;
