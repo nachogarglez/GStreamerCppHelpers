@@ -436,7 +436,7 @@ template <typename Type> struct GstPtr {
   }
 
   /// Dereference operators
-  const Type *operator->() const noexcept { return m_pointer; }
+  Type *operator->() const noexcept { return m_pointer; }
 
   /// Returns true if GstPtr< > is not nullptr
   explicit operator bool() const noexcept { return m_pointer != nullptr; }
