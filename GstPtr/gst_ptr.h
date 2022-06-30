@@ -25,38 +25,38 @@ Please read it carefully in order to avoid leaks or segfaults.
 
  Construct from a raw pointer
 
- +--------------------------+----------------------------------++
+ +--------------------------+-----------------------------------+
  | Function returns         |  Methods                          |
  +--------------------------+-----------------------------------+
- | [Transfer::full]         | GstPtr<Type>::GstPtr (Type *&&)   |
- |                          | GstPtr<Type>::GstPtr (Type *&)    |
- |                          | GstPtr<Type>& operator=(Type *&&) |
- |                          | GstPtr<Type>& operator=(Type *&)  |
+ | [Transfer::full]         | GstPtr<Type>(Type *&&)            |
+ |                          | GstPtr<Type>(Type *&)             |
+ |                          | GstPtr& operator=(Type *&&)       |
+ |                          | GstPtr& operator=(Type *&)        |
  +--------------------------+-----------------------------------+
- | [Transfer::floating]     | GstPtr<Type>::GstPtr (Type *&&)   |
- |                          | GstPtr<Type>::GstPtr (Type *&)    |
- |                          | GstPtr<Type>& operator=(Type *&&) |
- |                          | GstPtr<Type>& operator=(Type *&)  |
+ | [Transfer::floating]     | GstPtr<Type>(Type *&&)            |
+ |                          | GstPtr<Type>(Type *&)             |
+ |                          | GstPtr& operator=(Type *&&)       |
+ |                          | GstPtr& operator=(Type *&)        |
  |                          |                                   |
  |                          |          AND THEN                 |
  |                          |                                   |
- |                          | GstPtr<Type>::sink                |
+ |                          | void sink()                       |
  +--------------------------+-----------------------------------|
- | [Transfer::none]         | GstPtr<Type>::transferNone (Type*)|
+ | [Transfer::none]         | void transferNone (Type*)|        |
  |                          |                                   |
  +--------------------------+-----------------------------------+
 
  Pass to a parameter expecting a raw pointer
 
-+----------------------+-------------------------------------------------------+
-| Function expects     |  Methods                                              |
-+----------------------+-------------------------------------------------------+
-| self-reference       | Type* GstPtr<Type>::self()                            |
-| [Transfer::none]     | BaseType* GstPtr<Type>::self<BaseType>()              |
-|                      | DerivedType* GstPtr<Type>::selfDynamic<DerivedType>() |
-+----------------------+-------------------------------------------------------+
-| [Transfer::full]     | Type* GstPtr<Type>::transferFull()                    |
-+----------------------+-------------------------------------------------------+
++----------------------+-----------------------------------------+
+| Function expects     |  Methods                                |
++----------------------+-----------------------------------------+
+| self-reference       | Type* self()                            |
+| [Transfer::none]     | BaseType* self<BaseType>()              |
+|                      | DerivedType* selfDynamic<DerivedType>() |
++----------------------+-----------------------------------------+
+| [Transfer::full]     | Type* transferFull()                    |
++----------------------+-----------------------------------------+
 
 1) How to use
 --------------
@@ -147,29 +147,28 @@ and transfer the copy instead. i.e:
  function_that_expects_full_transfer (copy_of_gst_bin.transferFull())
 
 4. Static and dynamic casting
- ---------------------------------------------
- Use:
+-----------------------------
 
- Casting to a raw Ptr:
+You can cast `self` either statically or dynamically, for example:
 
  gst_bin.self<BaseType> ()
  gst_bin.selfDynamic<DerivedType> ()
 
- Casting to another GstPtr<>:
+For casting between `GstPtr<>`, you can use:
 
- GstPtr<Base> staticGstPtrCast(GstPtr<Derived>)
- GstPtr<Derived> dynamicGstPtrCast(GstPtr<Base>)
+ GstPtr staticGstPtrCast<Derived>(GstPtr&)
+ GstPtr dynamicGstPtrCast<Base>(GstPtr&)
 
- to cast static (to a base type), or dynamic (to a derived type).
+Example:
 
- Static cast is checked at build-time.
- Dynamic cast use GLib's functions for casting, but it will throw std::bad_alloc
+GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
+
+Always:
+
+ * Static cast is checked at build-time.
+ * Dynamic cast use GLib's functions for casting, but it will throw std::bad_alloc
  if the cast can't be done. GLib's function instead, issue a warning.
 
- Casting between different GstPtr is done with the free functions
- staticGstPtrCast and dynamicGstPtrCast, for example:
-
- GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
 
 */
 
@@ -437,7 +436,7 @@ template <typename Type> struct GstPtr {
   }
 
   /// Dereference operators
-  const Type *operator->() const noexcept { return m_pointer; }
+  Type *operator->() const noexcept { return m_pointer; }
 
   /// Returns true if GstPtr< > is not nullptr
   explicit operator bool() const noexcept { return m_pointer != nullptr; }

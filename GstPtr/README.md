@@ -32,19 +32,19 @@ Please read it carefully in order to avoid leaks or segfaults.
 
  ### Construct from a raw pointer
  
- | Function returns     | Methods                                                                                                                                                                                |
-|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | [Transfer::full]     | GstPtr\<Type\>::GstPtr (Type *&&)<br>GstPtr\<Type\>::GstPtr (Type *&)<br>GstPtr\<Type\>& operator=(Type *&&)<br>GstPtr\<Type\>& operator=(Type *&)                                     |
- | [Transfer::floating] | GstPtr\<Type\>::GstPtr (Type *&&)<br>GstPtr\<Type\>::GstPtr (Type *&)<br>GstPtr\<Type\>& operator=(Type *&&)<br>GstPtr\<Type\>& operator=(Type *&)<br>*AND THEN*<br>GstPtr<Type>::sink |
- | [Transfer::none]     | GstPtr\<Type\>::transferNone (Type*)                                                                                                                                                   |
+ | Function returns     | Methods                                                                                                                                       |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+ | [Transfer::full]     | GstPtr\<Type\>(Type *&&)<br>GstPtr\<Type\>(Type *&)<br>GstPtr& operator=(Type *&&)<br>GstPtr& operator=(Type *&)                              |
+ | [Transfer::floating] | GstPtr\<Type\>(Type *&&)<br>GstPtr\<Type\>(Type *&)<br>GstPtr& operator=(Type *&&)<br>GstPtr& operator=(Type *&)<br>*AND THEN*<br>void sink() |
+ | [Transfer::none]     | void transferNone (Type*)                                                                                                                     |
  
  ###  Pass to a parameter expecting a raw pointer
 
 
-| Function expects                    | Methods                                                                                                                                   |
-|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| self-reference<br> [Transfer::none] | Type* GstPtr\<Type\>::self()<br>BaseType* GstPtr\<Type\>::self\<BaseType\>()<br>DerivedType* GstPtr\<Type\>::selfDynamic\<DerivedType\>() |
-| [Transfer::full]                    | Type* GstPtr\<Type\>::transferFull()                                                                                                      |
+| Function expects                    | Methods                                                                                   |
+|-------------------------------------|-------------------------------------------------------------------------------------------|
+| self-reference<br> [Transfer::none] | Type* self()<br>BaseType* self\<BaseType\>()<br>DerivedType* selfDynamic\<DerivedType\>() |
+| [Transfer::full]                    | Type* transferFull()                                                                      |
 
 
 ## How to use
@@ -148,21 +148,23 @@ You can cast `self` either statically or dynamically, for example:
  gst_bin.selfDynamic<DerivedType> ()
 ```
 
-Free functions to casting to another `GstPtr<>`:
+For casting between `GstPtr<>`, you can use:
 
 ```c++
- GstPtr<Base> staticGstPtrCast(GstPtr<Derived>)
- GstPtr<Derived> dynamicGstPtrCast(GstPtr<Base>)
+ GstPtr staticGstPtrCast<Derived>(GstPtr&)
+ GstPtr dynamicGstPtrCast<Base>(GstPtr&)
 ``` 
 
+Example:
+
+```c++
+GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
+```
+
+Always:
  
  * Static cast is checked at build-time.
  * Dynamic cast use GLib's functions for casting, but it will throw std::bad_alloc
  if the cast can't be done. GLib's function instead, issue a warning.
 
- Example:
-
-```c++
-GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
-```
 
