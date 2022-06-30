@@ -417,7 +417,7 @@ template <typename Type> struct GstPtr {
     static_assert(std::is_base_of_v<BaseInterface, DerivedInterface>,
                   "For static casting, you can only cast to base objects. Use "
                   "selfDynamic< >");
-    return (toBaseType *)(m_pointer);
+    return (toBaseType *)m_pointer;
   }
 
   /// Pass the inner raw ptr to a function
