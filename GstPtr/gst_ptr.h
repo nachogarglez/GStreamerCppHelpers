@@ -60,7 +60,7 @@ Please read it carefully in order to avoid leaks or segfaults.
 
 1) How to use
 --------------
-First, you want this type if you need the same functionality as std::shared_ptr.
+First, you want this type if you need a functionality similar too std::shared_ptr.
 
 If you just want a view of a pointer (i.e, you don't plan ref/unref it, and you
 are not going to store the pointer), just use the GStreamer's raw pointer.
@@ -87,9 +87,9 @@ In practice, a lot of functions returning [transfer::floating] do not actually
 return a floating reference, but in this case the ::sink() method does nothing.
 Best practice is calling it for all [transfer::floating] functions.
 
-[transfer::full] functions work as expected, but do not call ::sink for those
-because some functions returning [transfer::full] do not clear the floating
-flag, thus causing leaks is ::sink is called.
+[transfer::full] functions work as expected, but do not call `void sink()` for
+those, because some functions returning [transfer::full] do not clear the floating
+flag, thus causing a leak if `void sink()` is called.
 
 
 1.1.2. Check if the function returns [transfer::none]
@@ -97,7 +97,7 @@ flag, thus causing leaks is ::sink is called.
 If the GStreamer's function returns [transfer::none], it is probably designed
 for a temporal usage of the returned value (a pointer view).
 In case you want to construct a GstPtr from this pointer (for example, to save
-it for later usage), you need to use GstPtr<Type>::transferNone instead of the
+it for later usage), you need to use Type* transferNone() instead of the
 constructors or assignment operators.
 
 For example:
@@ -106,8 +106,10 @@ GstPtr<GParamSpec> m_param_spec;
                           <--- [transfer::none] (just a view)
 m_param_spec.transferNone( g_object_class_find_property(... )
 
-Taking ownership of a [transfer::none] by using constructors or assignment,
-will result in an extra _unref and memory corruption.
+- Taking ownership of a [transfer::none] by using constructors or assignment,
+  will result in an extra unref.
+- Be careful with the pointer's content lifetime. `GstPtr` doesn't know if the
+  pointed memory is still valid.
 
 2. How to operate with the constructed GstPtr<Type>
 ---------------------------------------------------
@@ -121,7 +123,7 @@ expects taking ownership or not.
 3.1. If the function expects [transfer::none] or it's
  a "self" parameter for referring the object (this is a very common case):
 ---------------------------------------------------------------------------
-use GstPtr<Type>::self to pass the inner raw pointer. You can also
+use Type* self() to pass the inner raw pointer. You can also
 perform a static or dynamic cast to another type, i.e:
 
  GstPtr<GstBin> gst_bin; // a GstBin
@@ -129,14 +131,14 @@ perform a static or dynamic cast to another type, i.e:
  gst_bin.self<GstElement> ()  //Pass raw pointer casting it up to GstElement
 
 - Passing the pointer as "self" to a parameter that expects taking ownership
-  will result in a memory leak.
+  will result in a double unref.
 
 
 3.2. If the function expects [transfer::full]
 ---------------------------------------------
 
 If a function's parameter is marked as [transfer::full], it will take ownership.
-In this case, use GstPtr<Type>::transferFull() to "move" your pointer to
+In this case, use Type* transferFull() to "move" your pointer to
 the function.
 Your GstPtr will not be longer valid (nullptr) after transferring ownership.
 This behavior is for safety and coherence.
@@ -166,10 +168,8 @@ GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
 Always:
 
  * Static cast is checked at build-time.
- * Dynamic cast use GLib's functions for casting, but it will throw std::bad_alloc
- if the cast can't be done. GLib's function instead, issue a warning.
-
-
+ * Dynamic cast use GLib's functions for casting, but it will throw std::bad_cast
+ if the cast can't be done. GLib's function instead, issues a warning.
 */
 
 #pragma once
@@ -296,12 +296,14 @@ template <typename T> struct HasSinkFunction {
 //--------------------------------------------------
 // The GstPtr<  > object, finally.
 //--------------------------------------------------
-template <typename Type> struct GstPtr {
+template <typename Type> class GstPtr {
 
   static_assert(detail::IsInterfaceImplemented<Type>::value,
                 "So sorry! There's no interface defined for this type. "
                 "You need add it into GstPtr<> source code or extend "
                 "this header");
+
+public:
 
   // GstPtr is nullptr by default
   GstPtr() noexcept = default;
@@ -417,7 +419,7 @@ template <typename Type> struct GstPtr {
     static_assert(std::is_base_of_v<BaseInterface, DerivedInterface>,
                   "For static casting, you can only cast to base objects. Use "
                   "selfDynamic< >");
-    return (toBaseType *)(m_pointer);
+    return (toBaseType *)m_pointer;
   }
 
   /// Pass the inner raw ptr to a function

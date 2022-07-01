@@ -49,7 +49,7 @@ Please read it carefully in order to avoid leaks or segfaults.
 
 ## How to use
 
-First, you want this type if you need the same functionality as `std::shared_ptr`.
+First, you want this type if you need a functionality similar to `std::shared_ptr`.
 
 If you just want a view of a pointer (i.e, you don't plan ref/unref it, and you
 are not going to store the pointer), just use the GStreamer's raw pointer.
@@ -76,12 +76,12 @@ m_pipe.sink()
 ```
 
 In practice, a lot of functions returning `[transfer::floating]` do not actually
-return a `floating` reference, but in this case the `::sink()` method does nothing.
+return a `floating` reference, but in this case the `void sink()` method does nothing.
 Best practice is calling it for all `[transfer::floating]` functions.
 
-`[transfer::full]` functions work as expected, but do not call ::sink for those
-because some functions returning `[transfer::full]` do not clear the m_floating
-flag, thus causing leaks is `::sink` is called.
+`[transfer::full]` functions work as expected, but do not call `void sink()` for
+those, because some functions returning `[transfer::full]` do not clear the
+floating flag, thus causing double unref if `void sink()` is called.
 
 
 ####  Check if the function returns `[transfer::none]`
@@ -89,7 +89,7 @@ flag, thus causing leaks is `::sink` is called.
 If the GStreamer's function returns `[transfer::none]`, it is probably designed
 for a temporal usage of the returned value (a pointer view).
 In case you want to construct a GstPtr from this pointer (for example, to save
-it for later usage), you need to use `GstPtr<Type>::transferNone` instead of the
+it for later usage), you need to use `void transferNone (Type*)` instead of the
 constructors or assignment operators.
 
 For example:
@@ -100,8 +100,10 @@ GstPtr<GParamSpec> m_param_spec;
 m_param_spec.transferNone( g_object_class_find_property(... )
 ```
 
-Taking ownership of a `[transfer::none]` by using constructors or assignment,
-will result in an extra `_unref` and memory corruption.
+- ⚠ Taking ownership of a `[transfer::none]` by using constructors or assignment,
+will result in double `unref`.
+- ⚠ Be careful with the pointer's content lifetime. `GstPtr` doesn't know if the
+pointed memory is still valid.
 
 ###  How to operate with the constructed `GstPtr<Type>`
 Use it as a `std::shared_ptr`. It will add refs and will remove refs as necessary.
@@ -112,7 +114,7 @@ expects taking ownership or not.
 
 ##### If the function expects `[transfer::none]` or it's  a  `self` parameter for referring the object (this is a very common case):
 
-use `GstPtr<Type>::self` to pass the inner raw pointer. You can also
+use `Type* self()` to pass the inner raw pointer. You can also
 perform a static or dynamic cast to another type, i.e:
 
 ```c++
@@ -120,14 +122,14 @@ perform a static or dynamic cast to another type, i.e:
  gst_bin.self<GstElement> ()  //Pass raw pointer casting it up to GstElement
  ```
 
-- Passing the pointer as `self` to a parameter that expects taking ownership
-  will result in a memory leak.
+- ⚠ Passing the pointer as `self` to a parameter that expects taking ownership
+  will result in a double unref.
 
 
 ##### If the function expects `[transfer::full]`
 
 If a function's parameter is marked as `[transfer::full]`, it will take ownership.
-In this case, use `GstPtr<Type>::transferFull()` to "move" your pointer to
+In this case, use `Type* transferFull()` to _move_ your pointer to
 the function.
 Your GstPtr will not be longer valid (`nullptr`) after transferring ownership.
 This behavior is for safety and coherence.
@@ -148,7 +150,7 @@ You can cast `self` either statically or dynamically, for example:
  gst_bin.selfDynamic<DerivedType> ()
 ```
 
-For casting between `GstPtr<>`, you can use:
+For casting between different `GstPtr<Type>`, you can use:
 
 ```c++
  GstPtr staticGstPtrCast<Derived>(GstPtr&)
@@ -164,7 +166,7 @@ GstPtr<GstBin> asBin = dynamicGstPtrCast<GstBin>(m_pipe);
 Always:
  
  * Static cast is checked at build-time.
- * Dynamic cast use GLib's functions for casting, but it will throw std::bad_alloc
- if the cast can't be done. GLib's function instead, issue a warning.
+ * Dynamic cast use GLib's functions for casting, but it will throw `std::bad_cast`
+ if the cast can't be done. GLib's function instead, issues a warning.
 
 
