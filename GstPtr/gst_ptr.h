@@ -42,7 +42,7 @@ Please read it carefully in order to avoid leaks or segfaults.
  |                          |                                   |
  |                          | void sink()                       |
  +--------------------------+-----------------------------------|
- | [Transfer::none]         | void transferNone (Type*)|        |
+ | [Transfer::none]         | void transferNone (Type*)         |
  |                          |                                   |
  +--------------------------+-----------------------------------+
 
@@ -60,7 +60,7 @@ Please read it carefully in order to avoid leaks or segfaults.
 
 1) How to use
 --------------
-First, you want this type if you need a functionality similar too std::shared_ptr.
+First, you want this type if you need a functionality similar to std::shared_ptr.
 
 If you just want a view of a pointer (i.e, you don't plan ref/unref it, and you
 are not going to store the pointer), just use the GStreamer's raw pointer.
