@@ -294,9 +294,11 @@ template <typename T> struct HasSinkFunction {
 
 } // namespace detail
 
-//--------------------------------------------------
-// The GstPtr<  > object, finally.
-//--------------------------------------------------
+
+/// Specialized shared smartpointer for GStreamer/Glib objects
+/// @details
+/// <tt>GstPtr\<Type\></tt>
+/// @tparam Type is a GStreamer/GLib object
 template <typename Type> class GstPtr {
 
   static_assert(detail::IsInterfaceImplemented<Type>::value,
@@ -362,37 +364,31 @@ public:
   GstPtr(GstPtr &&other) noexcept { moveReference(std::move(other)); }
   GstPtr(const GstPtr &other) noexcept { takeReference(other); }
 
-  /// Full-Transfers ("moves") this GstPtr< > into a function
-  /// asking for [Transfer::full]
-  /// GstPtr< > will be nullptr after this operation.
-
+  /// Full-Transfers ("moves") this GstPtr into a parameter [Transfer::full]
+  /// @return The raw innerpointer
+  /// @note GstPtr will be nullptr after this operation.
   [[nodiscard]] Type *transferFull() noexcept {
     Type *toTransfer = m_pointer;
     m_pointer = nullptr;
     return toTransfer;
   }
 
-  /// Takes a rawPointer pointer from a function
-  /// documented as [Transfer::none]
-
+  /// Takes a raw pointer pointer from a function that returns [Transfer::none]
   void transferNone(Type *rawPointer) noexcept {
     reset(rawPointer);
     if (m_pointer != nullptr) {
       detail::GetInterface<Type>::type::ref(m_pointer);
     }
   }
-  /// Try to "sink" a floating reference.
-  /// This is a weird GObject concept that tries to emulate move semantics,
-  /// a "floating" object is a temporal object.
-  ///
-  /// An interface can implement a  "sink" function, what means:
-  ///
-  /// * If the object is "floating" (temporal object), the floating flag is
+  /// @brief Try to "sink" a floating reference.<br/>
+  /// @details This is a weird GObject concept that tries to emulate move semantics,
+  /// a "floating" object is a temporal object.<br/>
+  /// An interface can implement a  "sink" function, what means:<br/>
+  /// <ul><li>If the object is "floating" (temporal object), the floating flag is
   /// deleted and the refcount does not change. Thus, we are taking ownership.
-  ///
-  /// * If the object is NOT floating means that someone is keeping a reference
+  /// <li>If the object is NOT floating means that someone is keeping a reference
   /// and will unref it. In this case, the sunk interface clears the floating
-  /// flag *AND* adds a reference.
+  /// flag *AND* adds a reference.</ul>
 
   // Note: this would be automatic, but I have found some GStreamer functions
   // returning [transfer:full] with the floating flag set.
@@ -403,15 +399,15 @@ public:
     detail::GetInterface<Type>::type::sink(m_pointer);
   }
 
-  /// Pass the inner raw ptr to a function
-  /// that is not supposed to take ownership.
-
+  /// Pass the inner raw pointer to a parameter that doesn't take ownership.
+  /// @return The raw innerpointer
   [[nodiscard]] Type *self() const noexcept { return m_pointer; }
 
-  /// Pass the inner raw ptr to a function
+  /// Pass the inner raw pointer to a function
   /// that is not supposed to take ownership, using a
   /// safe cast to toBaseType*
-  /// This is static cast, thus only casting to a base class is allowed.
+  /// @return The raw innerpointer casted to \p toBaseType*
+  /// @note This is static cast, thus only casting to a base class is allowed.
   /// For dynamic casting, use selfDynamic<toDerivedType>().
 
   template <typename toBaseType> [[nodiscard]] toBaseType *self() const noexcept {
@@ -423,10 +419,11 @@ public:
     return (toBaseType *)m_pointer;
   }
 
-  /// Pass the inner raw ptr to a function
+  /// Pass the inner raw pointer to a function
   /// that is not supposed to take ownership, using a
-  /// dynamic cast to toDerivedType*
-  /// std::bad_cast exception if no such cast is possible
+  /// dynamic cast to \p toDerivedType*
+  /// @returns The inner raw pointer casted to \p toDerivedType*
+  /// @throws std::bad_cast if no such cast is possible
   template <typename toDerivedType> [[nodiscard]] toDerivedType *selfDynamic() const {
     using DerivedInterface = typename detail::GetInterface<toDerivedType>;
     auto mayPromote = g_type_check_instance_is_a((GTypeInstance *)m_pointer,
@@ -438,10 +435,10 @@ public:
         (GTypeInstance *)m_pointer, DerivedInterface::getGType());
   }
 
-  /// Dereference operators
+  /// Dereference operator
   Type *operator->() const noexcept { return m_pointer; }
 
-  /// Returns true if GstPtr< > is not nullptr
+  /// Returns true if GstPtr is not nullptr
   explicit operator bool() const noexcept { return m_pointer != nullptr; }
 
   ~GstPtr() { reset(nullptr); }
@@ -472,12 +469,17 @@ private:
   Type *m_pointer = nullptr;
 };
 
+/// Static cast from antoher GstPtr
+/// @returns Another GstPtr of type \p Base
 template <typename Base, typename Derived>
-[[nodiscard]] inline GstPtr<Base> staticGstPtrCast(GstPtr<Derived> &derived) {
+[[nodiscard]] inline GstPtr<Base> staticGstPtrCast(GstPtr<Derived> &derived) noexcept {
   GstPtr<Base> base;
   base.transferNone(derived.template self<Base>());
   return base;
 }
+/// Dynamic cast from antoher GstPtr
+/// @returns Another GstPtr of type \p Derived
+/// @throws std::bad_cast if no such cast is possible
 template <typename Derived, typename Base>
 [[nodiscard]] inline GstPtr<Derived> dynamicGstPtrCast(GstPtr<Base> &base) {
   GstPtr<Derived> derived;
