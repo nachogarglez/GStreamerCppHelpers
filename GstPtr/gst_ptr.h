@@ -183,6 +183,7 @@ Always:
 #endif
 
 #include <type_traits>
+#include <memory>
 
 namespace detail {
 
