@@ -67,10 +67,5 @@ jobs:
     needs: [build-linux, build-windows]
     steps:
     - uses: actions/checkout@v2
-    - name: Zip conan recipe
-      run: zip conan_recipe conan_recipe/conandata.yml conan_recipe/conanfile.py
     - name: Create release
       uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./conan_recipe.zip
