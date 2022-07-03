@@ -1,4 +1,0 @@
-sources:
-  "0.0.2":
-    sha256: "58f1d0915a8e98c89c20c3ed462a62d3680a43014ddc00af6ceb1b7d3c491390"
-    url: "https://github.com/nachogarglez/GStreamerCppHelpers/archive/refs/tags/0.0.2.tar.gz"

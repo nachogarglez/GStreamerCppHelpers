@@ -33,11 +33,10 @@ cmake --build build
 
 You can add this header as a Conan dependency in a few steps:
 
-* Export the recipe
+* Add a remote repository
 
 ```shell
-cd conan_recipe
-conan export gstreamercpphelpers/0.0.2@
+conan remote add gitlab https://gitlab.com/api/v4/projects/37519228/packages/conan
 ```
 
 * Include the dependency in your conanfile.txt or equivalent
