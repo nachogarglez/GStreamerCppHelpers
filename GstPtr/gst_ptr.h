@@ -229,6 +229,20 @@ struct IGstCaps {
   }
 };
 
+struct IGstBuffer {
+  template <typename T> static void ref(T* ptr) noexcept { gst_buffer_ref(ptr); }
+  template <typename T> static void unref(T* ptr) noexcept {
+    gst_buffer_unref(ptr);
+  }
+};
+
+struct IGstEvent {
+  template <typename T> static void ref(T* ptr) noexcept { gst_event_ref(ptr); }
+  template <typename T> static void unref(T* ptr) noexcept {
+    gst_event_unref(ptr);
+  }
+};
+
 struct IGParamSpec {
   template <typename T> static void ref(T *ptr) noexcept {
     g_param_spec_ref(ptr);
@@ -267,6 +281,8 @@ GST_PTR_MAP_INTERFACE_WITH_TYPE(GstElement, GST_TYPE_ELEMENT)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBin, GST_TYPE_BIN)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstPipeline, GST_TYPE_PIPELINE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstCaps, GST_TYPE_CAPS)
+GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBuffer, GST_TYPE_BUFFER)
+GST_PTR_MAP_INTERFACE_WITH_TYPE(GstEvent, GST_TYPE_EVENT)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBus, GST_TYPE_BUS)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GMainLoop, G_TYPE_NONE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GParamSpec, G_TYPE_PARAM)
