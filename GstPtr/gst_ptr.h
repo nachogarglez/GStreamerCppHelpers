@@ -212,6 +212,13 @@ struct IGObject {
   }
 };
 
+struct IGstMiniObject {
+  template <typename T> static void ref(T *ptr) noexcept { gst_mini_object_ref(ptr); }
+  template <typename T> static void unref(T *ptr) noexcept {
+    gst_mini_object_unref(ptr);
+  }
+};
+
 // Other objects simply inherit for its corresponding base class according
 // to the documentation.
 
@@ -221,27 +228,9 @@ struct IGstPad : IGstObject {};
 struct IGstBin : IGstElement {};
 struct IGstPipeline : IGstBin {};
 struct IGstBus : IGstObject {};
-
-struct IGstCaps {
-  template <typename T> static void ref(T *ptr) noexcept { gst_caps_ref(ptr); }
-  template <typename T> static void unref(T *ptr) noexcept {
-    gst_caps_unref(ptr);
-  }
-};
-
-struct IGstBuffer {
-  template <typename T> static void ref(T* ptr) noexcept { gst_buffer_ref(ptr); }
-  template <typename T> static void unref(T* ptr) noexcept {
-    gst_buffer_unref(ptr);
-  }
-};
-
-struct IGstEvent {
-  template <typename T> static void ref(T* ptr) noexcept { gst_event_ref(ptr); }
-  template <typename T> static void unref(T* ptr) noexcept {
-    gst_event_unref(ptr);
-  }
-};
+struct IGstCaps : IGstMiniObject {};
+struct IGstBuffer : IGstMiniObject {};
+struct IGstEvent : IGstMiniObject {};
 
 struct IGParamSpec {
   template <typename T> static void ref(T *ptr) noexcept {

@@ -17,6 +17,8 @@ constexpr GType GST_TYPE_BUS = 0x07;
 constexpr GType G_TYPE_NONE = 0x08;
 constexpr GType G_TYPE_PARAM = 0x09;
 constexpr GType GST_TYPE_PAD = 0x0A;
+constexpr GType GST_TYPE_BUFFER = 0x0B;
+constexpr GType GST_TYPE_EVENT = 0x0C;
 constexpr bool TRUE = true;
 
 struct GTypeInstance {
@@ -43,7 +45,10 @@ struct GstPad : public GstObject {};
 struct GstBin : public GstElement {};
 struct GstPipeline : public GstBin {};
 struct GstBus : public GstObject {};
-class GstCaps : public GTypeInstance {};
+class GstMiniObject : public GTypeInstance {};
+class GstCaps : public GstMiniObject {};
+class GstBuffer : public GstMiniObject {};
+class GstEvent : public GstMiniObject {};
 struct GParamSpec : public GTypeInstance {};
 struct GMainLoop : public GTypeInstance {};
 
@@ -68,7 +73,7 @@ void g_object_ref_sink(GObject *obj) {
 
 
 // NOLINTNEXTLINE
-void gst_caps_unref(GstCaps *obj) {
+void gst_mini_object_unref(GstMiniObject *obj) {
     obj->unref();
     assert (obj->m_refCount >= 0);
     if (obj->m_refCount == 0) {
@@ -76,7 +81,7 @@ void gst_caps_unref(GstCaps *obj) {
     }
 }
 // NOLINTNEXTLINE
-void gst_caps_ref(GstCaps *obj) {
+void gst_mini_object_ref(GstMiniObject *obj) {
     obj->ref();
 }
 
@@ -103,7 +108,7 @@ GstPipeline *g_function_full_transfer_pipeline() {
 // NOLINTNEXTLINE
 GstCaps *g_function_full_transfer_caps() {
     auto *newObject = new GstCaps();
-    gst_caps_ref(newObject);
+    gst_mini_object_ref(newObject);
     return newObject;
 }
 
