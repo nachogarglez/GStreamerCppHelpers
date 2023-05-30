@@ -212,6 +212,13 @@ struct IGObject {
   }
 };
 
+struct IGstMiniObject {
+  template <typename T> static void ref(T *ptr) noexcept { gst_mini_object_ref(ptr); }
+  template <typename T> static void unref(T *ptr) noexcept {
+    gst_mini_object_unref(ptr);
+  }
+};
+
 // Other objects simply inherit for its corresponding base class according
 // to the documentation.
 
@@ -221,13 +228,9 @@ struct IGstPad : IGstObject {};
 struct IGstBin : IGstElement {};
 struct IGstPipeline : IGstBin {};
 struct IGstBus : IGstObject {};
-
-struct IGstCaps {
-  template <typename T> static void ref(T *ptr) noexcept { gst_caps_ref(ptr); }
-  template <typename T> static void unref(T *ptr) noexcept {
-    gst_caps_unref(ptr);
-  }
-};
+struct IGstCaps : IGstMiniObject {};
+struct IGstBuffer : IGstMiniObject {};
+struct IGstEvent : IGstMiniObject {};
 
 struct IGParamSpec {
   template <typename T> static void ref(T *ptr) noexcept {
@@ -267,6 +270,8 @@ GST_PTR_MAP_INTERFACE_WITH_TYPE(GstElement, GST_TYPE_ELEMENT)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBin, GST_TYPE_BIN)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstPipeline, GST_TYPE_PIPELINE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstCaps, GST_TYPE_CAPS)
+GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBuffer, GST_TYPE_BUFFER)
+GST_PTR_MAP_INTERFACE_WITH_TYPE(GstEvent, GST_TYPE_EVENT)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBus, GST_TYPE_BUS)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GMainLoop, G_TYPE_NONE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GParamSpec, G_TYPE_PARAM)
