@@ -173,13 +173,13 @@ TEST(GstPtr, constructor_full_transfer_l_value) {
     ASSERT_EQ(gstObject.self()->m_refCount, 1);
 }
 
-TEST(GstPtr, constructor_assignament_full_transfer_r_value) {
+TEST(GstPtr, constructor_assignment_full_transfer_r_value) {
     GstPtr<GObject> gstObject;
     gstObject = g_function_full_transfer();
     ASSERT_EQ(gstObject.self()->m_refCount, 1);
 }
 
-TEST(GstPtr, constructor_assignament_full_transfer_l_value) {
+TEST(GstPtr, constructor_assignment_full_transfer_l_value) {
     auto *pointer = g_function_full_transfer();
     GstPtr<GObject> gstObject;
     gstObject = pointer;
@@ -211,7 +211,7 @@ TEST(GstPtr, copy_constructor) {
     ASSERT_EQ(objC.self()->m_refCount, 3);
 }
 
-TEST(GstPtr, copy_assignament) {
+TEST(GstPtr, copy_assignment) {
     GstPtr<GObject> objA = g_function_full_transfer();
     GstPtr<GObject> objB;
     objB = objA;
@@ -222,7 +222,7 @@ TEST(GstPtr, copy_assignament) {
     ASSERT_EQ(objC.self()->m_refCount, 3);
 }
 
-TEST(GstPtr, copy_re_assignament) {
+TEST(GstPtr, copy_re_assignment) {
     GstPtr<GObject> objA = g_function_full_transfer();
     GstPtr<GObject> objB = g_function_full_transfer();
     objB = objA;
@@ -237,7 +237,7 @@ TEST(GstPtr, move_constructor) {
     ASSERT_EQ(obj.self(), nullptr);
 }
 
-TEST(GstPtr, move_assignament) {
+TEST(GstPtr, move_assignment) {
     GstPtr<GObject> obj = g_function_full_transfer();
     GstPtr<GObject> moved;
     moved = std::move(obj);
@@ -257,7 +257,7 @@ TEST(GstPtr, self_static_cast) {
     g_function_get_self_gst_object(obj.self<GstObject>());
 }
 
-TEST(GstPtr, self_dynamic_cast_sucess) {
+TEST(GstPtr, self_dynamic_cast_success) {
     GstPtr<GObject> obj =  g_function_full_transfer_pipeline();
     g_function_get_self_pipeline(obj.selfDynamic<GstPipeline>());
 
@@ -276,7 +276,7 @@ TEST(GstPtr, static_cast_between_gstptr) {
     ASSERT_EQ(obj.self()->m_refCount, 2);
 }
 
-TEST(GstPtr, dynamic_cast_between_gstptr_sucess) {
+TEST(GstPtr, dynamic_cast_between_gstptr_success) {
     GstPtr<GObject> obj=  g_function_full_transfer_pipeline();
     GstPtr<GstPipeline> pipe = dynamicGstPtrCast<GstPipeline>(obj);
     ASSERT_EQ(pipe.self()->m_refCount, 2);
