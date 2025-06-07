@@ -19,6 +19,7 @@ constexpr GType G_TYPE_PARAM = 0x09;
 constexpr GType GST_TYPE_PAD = 0x0A;
 constexpr GType GST_TYPE_BUFFER = 0x0B;
 constexpr GType GST_TYPE_EVENT = 0x0C;
+constexpr GType GST_TYPE_CONTEXT = 0x0D;
 constexpr bool TRUE = true;
 
 struct GTypeInstance {
@@ -49,6 +50,7 @@ class GstMiniObject : public GTypeInstance {};
 class GstCaps : public GstMiniObject {};
 class GstBuffer : public GstMiniObject {};
 class GstEvent : public GstMiniObject {};
+class GstContext : public GstMiniObject {};
 struct GParamSpec : public GTypeInstance {};
 struct GMainLoop : public GTypeInstance {};
 
