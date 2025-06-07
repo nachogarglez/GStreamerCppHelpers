@@ -29,8 +29,11 @@ function(add_cpp_test)
         CPP)
     set_target_properties(${test_name} PROPERTIES FOLDER "test")
     if(WIN32)
-        set_tests_properties(${test_name} PROPERTIES ENVIRONMENT
-                                                     "PATH=${CMAKE_BIN_DIR}/bin\;${CMAKE_BIN_DIR}/lib\;$ENV{PATH}")
+        set_tests_properties(
+            ${test_name}
+            PROPERTIES
+                ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/bin;${CMAKE_BINARY_DIR}/lib;$ENV{PATH}"
+        )
     endif()
     gtest_discover_tests(${CONFIG_TARGET})
 endfunction()
