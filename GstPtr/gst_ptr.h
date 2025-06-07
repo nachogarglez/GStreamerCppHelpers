@@ -231,6 +231,7 @@ struct IGstBus : IGstObject {};
 struct IGstCaps : IGstMiniObject {};
 struct IGstBuffer : IGstMiniObject {};
 struct IGstEvent : IGstMiniObject {};
+struct IGstContext : IGstMiniObject {};
 
 struct IGParamSpec {
   template <typename T> static void ref(T *ptr) noexcept {
@@ -272,6 +273,7 @@ GST_PTR_MAP_INTERFACE_WITH_TYPE(GstPipeline, GST_TYPE_PIPELINE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstCaps, GST_TYPE_CAPS)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBuffer, GST_TYPE_BUFFER)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstEvent, GST_TYPE_EVENT)
+GST_PTR_MAP_INTERFACE_WITH_TYPE(GstContext, GST_TYPE_CONTEXT)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GstBus, GST_TYPE_BUS)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GMainLoop, G_TYPE_NONE)
 GST_PTR_MAP_INTERFACE_WITH_TYPE(GParamSpec, G_TYPE_PARAM)
