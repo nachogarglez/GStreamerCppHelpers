@@ -1,4 +1,5 @@
-from conans import ConanFile, tools
+from conan import ConanFile
+from conan.tools.files import copy, get
 import os
 
 
@@ -9,27 +10,27 @@ class GStreamerCppHelpersConan(ConanFile):
     url = "https://github.com/nachogarglez/GStreamerCppHelpers"
     license = "LGPL-3.0"
     topics = ("gstreamer", "c++")
-    no_copy_source = True
+    package_type = "header-library"
     settings = "os", "arch", "compiler", "build_type"
-    generators = "cmake"
+    no_copy_source = True
 
     @property
     def _source_subfolder(self):
         return os.path.join(self.source_folder, "source_subfolder")
 
     def validate(self):
-        if self.settings.compiler.cppstd:
-            tools.check_min_cppstd(self, 11)
+        if self.settings.get_safe("compiler.cppstd"):
+            self.cpp_info.required_cpp_standard = 11
 
     def source(self):
-        tools.get(**self.conan_data["sources"][self.version], destination=self._source_subfolder, strip_root=True)
+        get(self, **self.conan_data["sources"][self.version], destination=self._source_subfolder, strip_root=True)
 
     def package(self):
-        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
-        self.copy("*.h", src=self._source_subfolder, dst=os.path.join("include"))
+        copy(self, "LICENSE", dst=os.path.join(self.package_folder, "licenses"), src=self._source_subfolder)
+        copy(self, "*.h", dst=os.path.join(self.package_folder, "include"), src=self._source_subfolder)
 
     def package_id(self):
-        self.info.header_only()
+        self.info.clear()
 
     def package_info(self):
-        self.cpp_info.includedirs.append(os.path.join("include"))
+        self.cpp_info.includedirs = ["include"]
