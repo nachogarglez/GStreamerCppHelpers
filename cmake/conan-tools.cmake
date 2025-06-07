@@ -7,7 +7,7 @@
 #
 
 set(CONAN_CMAKE_VERSION
-    "0.18.1"
+    "0.18.2"
     CACHE STRING "Conan cmake script version")
 option(CONAN_BUILD_MISSING "Automatically build all missing dependencies" OFF)
 
@@ -19,7 +19,7 @@ function(conan_configure)
     # Install conan
     find_package(Python3 3.6 QUIET REQUIRED)
     execute_process(
-        COMMAND "${Python3_EXECUTABLE}" -m pip install --upgrade conan
+        COMMAND "${Python3_EXECUTABLE}" -m pip install --upgrade "conan<2"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         RESULT_VARIABLE COMMAND_RESULT
         OUTPUT_QUIET ERROR_QUIET)
@@ -30,7 +30,7 @@ function(conan_configure)
     # Donwload conan module
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan/conan.cmake")
         message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
+        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.2/conan.cmake"
              "${CMAKE_BINARY_DIR}/conan/conan.cmake" TLS_VERIFY ON)
     endif()
     include(${CMAKE_BINARY_DIR}/conan/conan.cmake)
