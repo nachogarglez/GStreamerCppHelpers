@@ -40,14 +40,14 @@ You can add this header as a Conan dependency in a few steps:
 
 ```shell
 cd conan_recipe
-conan export gstreamercpphelpers/0.0.2@
+conan export gstreamercpphelpers/0.0.3@
 ```
 
 * Include the dependency in your conanfile.txt or equivalent
 
 ```script
 [requires]
-   gstreamercpphelpers/0.0.2
+   gstreamercpphelpers/0.0.3
 ```
 
 * Use in your CMakeLists.txt
