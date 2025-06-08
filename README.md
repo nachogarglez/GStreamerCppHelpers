@@ -52,7 +52,7 @@ A Conan 2.x recipe is provided under `/conan_recipe`.
 
 ```bash
 cd conan_recipe
-conan export . gstreamercpphelpers --version=0.0.3
+conan export . --name gstreamercpphelpers --version=0.0.3
 ```
 ⚠️ Make sure your Conan profile is configured with C++17 or higher.
 
