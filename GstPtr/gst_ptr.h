@@ -213,9 +213,9 @@ struct IGObject {
 };
 
 struct IGstMiniObject {
-  template <typename T> static void ref(T *ptr) noexcept { gst_mini_object_ref(ptr); }
+  template <typename T> static void ref(T *ptr) noexcept { gst_mini_object_ref((GstMiniObject *)ptr); }
   template <typename T> static void unref(T *ptr) noexcept {
-    gst_mini_object_unref(ptr);
+    gst_mini_object_unref((GstMiniObject *)ptr);
   }
 };
 
