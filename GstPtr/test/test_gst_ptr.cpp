@@ -19,7 +19,6 @@ constexpr GType G_TYPE_PARAM = 0x09;
 constexpr GType GST_TYPE_PAD = 0x0A;
 constexpr GType GST_TYPE_BUFFER = 0x0B;
 constexpr GType GST_TYPE_EVENT = 0x0C;
-constexpr bool TRUE = true;
 
 struct GTypeInstance {
     virtual ~GTypeInstance() = default;
