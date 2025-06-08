@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.files import copy, get
+from conan.tools.build import check_min_cppstd
 import os
 
 
@@ -19,8 +20,8 @@ class GStreamerCppHelpersConan(ConanFile):
         return os.path.join(self.source_folder, "source_subfolder")
 
     def validate(self):
-        if self.settings.get_safe("compiler.cppstd"):
-            self.cpp_info.required_cpp_standard = 11
+        if self.settings.compiler.get_safe("cppstd"):
+            check_min_cppstd(self, "17")
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], destination=self._source_subfolder, strip_root=True)
