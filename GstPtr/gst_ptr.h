@@ -435,7 +435,7 @@ public:
     using DerivedInterface = typename detail::GetInterface<toDerivedType>;
     auto mayPromote = g_type_check_instance_is_a((GTypeInstance *)m_pointer,
                                                  DerivedInterface::getGType());
-    if (mayPromote != TRUE) {
+    if (!mayPromote) {
       throw std::bad_cast();
     }
     return (toDerivedType *)g_type_check_instance_cast(
