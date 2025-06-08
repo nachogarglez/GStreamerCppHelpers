@@ -81,7 +81,7 @@ Best practice is calling it for all `[transfer::floating]` functions.
 
 `[transfer::full]` functions work as expected, but do not call `void sink()` for
 those, because some functions returning `[transfer::full]` do not clear the
-floating flag, thus causing double unref if `void sink()` is called.
+floating flag, thus causing a leak if `void sink()` is called.
 
 
 ####  Check if the function returns `[transfer::none]`

@@ -22,7 +22,10 @@ This library is header-only, therefore you only need to build it to run the test
 
 * Pre-requisites:
   * clang-tidy  >= 10
-  * Python >= 3.6
+  * Python >= 3.8
+  * Conan >= 2.0
+    (the build scripts will auto-detect a default profile if needed)
+
 
 ```bash
 cmake -Bbuild -DCONAN_BUILD_MISSING=ON

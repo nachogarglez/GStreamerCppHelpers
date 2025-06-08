@@ -25,11 +25,14 @@ jobs:
         with:
           cmake-version: '3.23.x'
       - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
+        run: |
+          python -m pip install --upgrade "conan>=2.0,<3"
+      - name: Setup Conan profile
+        run: |
+          conan profile detect --force
       - name: Configure project
         run: |
-          cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+          cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DCONAN_BUILD_MISSING=ON
       - name: Build project
         run: |
           cmake --build build
@@ -48,18 +51,21 @@ jobs:
         with:
           cmake-version: '3.23.x'
       - name: Install Conan
-        id: conan
-        uses: turtlebrowser/get-conan@main
+        run: |
+          python -m pip install --upgrade "conan>=2.0,<3"
+      - name: Setup Conan profile
+        run: |
+          conan profile detect --force
       - name: Configure project
         run: |
           cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Debug -DCONAN_BUILD_MISSING=ON
       - name: Build project
         run: |
-          .\build\activate_run.ps1
+          .\build\conanrun.bat
           cmake --build build
       - name: Run unit tests
         run: |
-          .\build\activate_run.ps1
+          .\build\conanrun.bat
           cmake --build build --target run_tests
   deploy:
     if: ${{ startsWith(github.ref, 'refs/tags/') }}

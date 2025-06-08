@@ -7,11 +7,9 @@
 #
 
 cmake_minimum_required(VERSION 3.22.3-3.23)
-find_package(Python3 3.6 QUIET REQUIRED)
+find_package(Python3 3.8 QUIET REQUIRED)
 
-project(
-    GstStreamerCppHelpers
-    LANGUAGES CXX)
+project(GstStreamerCppHelpers LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -27,11 +25,13 @@ include(pre-commit)
 include(conan-tools)
 
 # Config conan
-set(CONAN_OPTIONS "*:shared=True" )
+set(CONAN_OPTIONS "*:shared=True")
 
-list(APPEND CONAN_REQUIRES "gtest/cci.20210126")
+list(APPEND CONAN_REQUIRES "gtest/1.14.0")
+# gtest provides a CMake package named "GTest".
 list(APPEND CONAN_FIND GTest)
-list(APPEND CONAN_OPTIONS "libelf:shared=False")
+list(APPEND CONAN_OPTIONS "libelf/*:shared=False")
+list(APPEND CONAN_OPTIONS "gtest/*:shared=False")
 include(unit-tests)
 
 conan_configure(REQUIRES ${CONAN_REQUIRES} OPTIONS ${CONAN_OPTIONS} FIND_PACKAGES ${CONAN_FIND})
