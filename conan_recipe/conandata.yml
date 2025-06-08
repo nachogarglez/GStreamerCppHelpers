@@ -3,5 +3,5 @@ sources:
     sha256: "58f1d0915a8e98c89c20c3ed462a62d3680a43014ddc00af6ceb1b7d3c491390"
     url: "https://github.com/nachogarglez/GStreamerCppHelpers/archive/refs/tags/0.0.2.tar.gz"
   "0.0.3":
-    sha256: "8376b8ab97e7f6228b814988ccd8b204fe0ff9f3de9ff535e278a2c548c12ff2"
+    sha256: "c747fa1acf4155235fef3040d2a61fd800bc7224f54ee5389733ed741ee34eb4"
     url: "https://github.com/nachogarglez/GStreamerCppHelpers/archive/refs/tags/0.0.3.tar.gz"
