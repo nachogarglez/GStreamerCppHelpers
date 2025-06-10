@@ -1,7 +1,7 @@
 /*
  *  GstPtr<Type> is a type of shared pointer specialized for GStreamer.
  *  (C) 2022 Nacho Garcia <nacho.garglez@gmail.com>
- *  License: https://www.gnu.org/licenses/lgpl-3.0.html LGPL version 3 or higher
+ *  Licensed under the MIT License. See LICENSE file for details.
  *
  *  This needs C++17
  *
